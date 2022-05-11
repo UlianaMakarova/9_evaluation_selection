@@ -1,7 +1,16 @@
 from pathlib import Path
+from joblib import dump
+
 import click
 
+import mlflow
+import mlflow.sklearn
+
+from sklearn.metrics import accuracy_score
+
 from .data_reader import get_dataset
+from .pipeline import create_pipeline
+
 @click.command()
 @click.option(
     "-d",
@@ -17,6 +26,36 @@ from .data_reader import get_dataset
     type=click.Path(dir_okay=False, writable=True, path_type=Path),
     show_default=True,
 )
+@click.option(
+    "--random-state",
+    default=42,
+    type=int,
+    show_default=True,
+)
+@click.option(
+    "--test-split-ratio",
+    default=0.2,
+    type=click.FloatRange(0, 1, min_open=True, max_open=True),
+    show_default=True,
+)
+@click.option(
+    "--use-scaler",
+    default=True,
+    type=bool,
+    show_default=True,
+)
+@click.option(
+    "--max-iter",
+    default=1000,
+    type=int,
+    show_default=True,
+)
+@click.option(
+    "--logreg-c",
+    default=1.0,
+    type=float,
+    show_default=True,
+)
 def train(
     dataset_path: Path,
     save_model_path: Path,
@@ -26,9 +65,22 @@ def train(
     max_iter: int,
     logreg_c: float,
 ) -> None:
-    features_train, target_train = get_dataset(
+    features_train, target_train, features_val, target_val = get_dataset(
         dataset_path,
+        random_state,
+        test_split_ratio,
     )
     click.echo(f"Features_train shape: {features_train.shape}.")
-    click.echo(f"Features_train shape: {target_train.shape}.")
+    click.echo(f"Target_train shape: {target_train.shape}.")
+    with mlflow.start_run():
+        pipeline = create_pipeline(use_scaler, max_iter, logreg_c, random_state)
+        pipeline.fit(features_train, target_train)
+        accuracy = accuracy_score(target_val, pipeline.predict(features_val))
+        mlflow.log_param("use_scaler", use_scaler)
+        mlflow.log_param("max_iter", max_iter)
+        mlflow.log_param("logreg_c", logreg_c)
+        mlflow.log_metric("accuracy", accuracy)
+        click.echo(f"Accuracy: {accuracy}.")
+        dump(pipeline, save_model_path)
+        click.echo(f"Model is saved to {save_model_path}.")
 
