@@ -1,4 +1,12 @@
 # 9_evaluation_selection
+#Работа не доделана.((( 
+(сначала poetry не ставился, потом mlflow перестал работать и я еще не починила)
+#Работает только poetry run train
+Logistic regression не планирую включать в окончательный проект, просто для тестирования 
+и сравнения точности оставила пока.
+
+Если поставите 0, не обижусь)))
+Сабмичу позорную работу, чтобы посмотреть и поробывать запустить другие работы
 
 ## Usage
 This package allows you to train model for predict to predict the forest cover type.
@@ -13,6 +21,7 @@ poetry install --no-dev
 poetry run train -d <path to csv with data> -s <path to save trained model>
 ```
 You can configure additional options (such as hyperparameters) in the CLI. To get a full list of them, use help:
+##TODO не работает
 ```sh
 poetry run train --help
 ```
@@ -20,11 +29,3 @@ poetry run train --help
 ```sh
 poetry run mlflow ui
 ```
-
-1 - Spruce/Fir;
-2 - Lodgepole Pine;
-3 - Ponderosa Pine;
-4 - Cottonwood/Willow;
-5 - Aspen;
-6 - Douglas-fir;
-7 - Krummholz;
