@@ -6,6 +6,7 @@ authors = ["ml_user <ml_user@example.com>"]
 
 [tool.poetry.scripts]
 train = "9_evaluation_selection.train:train"
+save_result = "9_evaluation_selection.train:save_competiotion_results"
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -17,6 +18,7 @@ scikit-learn = "^1.0.2"
 dump = "^0.0.5"
 pipeline = "^0.1"
 StandardScaler = "^0.5"
+load = "^2020.12.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
